@@ -14,11 +14,12 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->date('date');
             $table->string('category');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
          });
         }
 
-        
+
     public function down(): void
     {
         Schema::dropIfExists('expenses');
