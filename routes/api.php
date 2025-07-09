@@ -11,11 +11,10 @@ Route::get('/test', function (Request $request) {
 
 // Authentication Routes
 Route::post('/login', [AuthController::class, 'login'])->middleware(['throttle:limit']);
-Route::get('/login', [AuthController::class, 'loginUser'])->name('loginPage');
+Route::get('/login', [AuthController::class, 'GetLogin']);
 
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/register', [AuthController::class, 'registerUser']);
 
 Route::get('/forgot-password', [AuthController::class, 'forgotPass']);
 Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
@@ -25,7 +24,12 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middle
 
 // Expense Handle Routes
 Route::post('/expense-store',[ExpenseController::class, 'store']);
-Route::post('/expense-update',[ExpenseController::class, 'update']);
-Route::post('/expense-delete',[ExpenseController::class, 'destroy']);
-Route::post('/read',[ExpenseController::class, 'read']);
+Route::get('/expense-create',[ExpenseController::class, 'create']);
+
+Route::put('/expense-update',[ExpenseController::class, 'update']);
+Route::get('/expense-update',[ExpenseController::class, 'GetUpdate']);
+
+Route::delete('/expense-delete',[ExpenseController::class, 'destroy']);
+
+Route::get('/read',[ExpenseController::class, 'read']);
 

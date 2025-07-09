@@ -6,8 +6,9 @@ use App\Http\Requests\DeleteRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Models\User;
 use App\Models\Expense;
-//use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use App\Http\Requests\CreateRequest;
+use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Log;
 
 class ExpenseController extends Controller
@@ -18,9 +19,31 @@ class ExpenseController extends Controller
         return view('expenses.index', compact('expenses'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('expenses.create');
+        $validated = $request->validate([
+            'expense_id' => 'required',
+        ]);
+        try {
+            $expense = Expense::find($request->expense_id);
+            if (!$expense) {
+                return response()->json([
+                    'message' => 'Expense not found'
+                ]);
+            }
+            return response()->json([
+                'message' => 'Expense Found',
+                'expense' => $expense
+
+            ]);
+        }catch(\Exception $exception){
+            Log::error('FULL ERROR: ' . $exception->getMessage());
+            return response()->json([
+                'message' => 'Something went wrong. Please try again later',
+                'error' => $exception->getMessage()
+            ]);
+        }
+//        return view('expenses.create');
     }
 
     public function store(CreateRequest $request)
@@ -76,9 +99,31 @@ class ExpenseController extends Controller
         return view('expenses.show', compact('expense'));
     }
 
-    public function edit(Expense $expense)
+    public function GetUpdate(Request $request)
     {
-        return view('expenses.edit', compact('expense'));
+        $validated = $request->validate([
+            'expense_id' => 'required',
+        ]);
+        try {
+            $expense = Expense::find($request->expense_id);
+            if (!$expense) {
+                return response()->json([
+                    'message' => 'Updated Expense'
+                ]);
+            }
+            return response()->json([
+                'message' => 'Expense Found',
+                'expense' => $expense
+
+            ]);
+        }catch(\Exception $exception){
+            Log::error('FULL ERROR: ' . $exception->getMessage());
+            return response()->json([
+                'message' => 'Something went wrong. Please try again later',
+            ]);
+        }
+
+//        return view('expenses.edit', compact('expense'));
     }
 
     public function update(UpdateRequest $request)

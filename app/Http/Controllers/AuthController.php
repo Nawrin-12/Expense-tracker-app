@@ -17,9 +17,31 @@ use App\Traits\ApiResponses;
 class AuthController extends Controller
 {
     use ApiResponses;
-    public function loginUser()
+    public function GetLogin(LoginRequest $request): JsonResponse
     {
-        return view('auth.login');
+        $validated = $request->validated();
+        try{
+            $user = User::query()->where('email', $validated['email'])->first();
+//            $user=User::find('$request->id');
+            if(!$user){
+                return response()->json([
+                    'message'=>'User not found'
+                ]);
+            }
+            return response()->json([
+                'message'=>'User info',
+                'user'=>$user
+            ]);
+//        return view('auth.login');
+
+        }catch(\Exception $exception){
+            Log::error('Full Error: ' . $exception->getMessage());
+            return response()->json([
+                'message' => 'Something Went Wrong. Please try later.',
+                'error' => $exception->getMessage()
+                ]);
+
+        }
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -62,10 +84,12 @@ class AuthController extends Controller
         }
     }
 
-    public function registerUser()
-    {
-        return view('auth.register');
-    }
+//    public function registerUser(RegisterRequest $request): JsonResponse
+//    {
+//        $validated = $request->validated();
+//
+////        return view('auth.register');
+//    }
 
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -93,16 +117,14 @@ class AuthController extends Controller
 
     }
 
-//    public function forgetPass(){
+    public function forgetPass(){
+
 //        return view('auth.forgetpass');
-//    }
+    }
 
     public function forgetPassword(ForgetPassRequest $request): JsonResponse
     {
         $validated = $request->validated();
-//        $request->validate([
-//            'email' => 'required|email|exists:users,email',
-//        ]);
 
         try {
             $user = User::query()->where('email', $validated['email'])->first();
@@ -124,10 +146,6 @@ class AuthController extends Controller
                 $message->to($request->email)
                     ->subject('Reset Password');
             });
-//            Mail::to({$request->email}, ['token' => $token], function ($message) use ($request) {
-//                $message->to($request->email);
-//                $message->subject('Reset Password');
-//            });
             return response()->json([
                 'message' => 'Password token has been sent to your email'
             ]);
