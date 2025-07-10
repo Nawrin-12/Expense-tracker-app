@@ -108,13 +108,12 @@ class ExpenseController extends Controller
             $expense = Expense::find($request->expense_id);
             if (!$expense) {
                 return response()->json([
-                    'message' => 'Updated Expense'
+                    'message' => 'The expense id does not exist'
                 ]);
             }
             return response()->json([
-                'message' => 'Expense Found',
+                'message' => 'The Updated Expense:',
                 'expense' => $expense
-
             ]);
         }catch(\Exception $exception){
             Log::error('FULL ERROR: ' . $exception->getMessage());
@@ -122,7 +121,6 @@ class ExpenseController extends Controller
                 'message' => 'Something went wrong. Please try again later',
             ]);
         }
-
 //        return view('expenses.edit', compact('expense'));
     }
 

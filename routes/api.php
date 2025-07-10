@@ -10,15 +10,14 @@ Route::get('/test', function (Request $request) {
 });
 
 // Authentication Routes
-Route::post('/login', [AuthController::class, 'login'])->middleware(['throttle:limit']);
 Route::get('/login', [AuthController::class, 'GetLogin']);
-
+Route::post('/login', [AuthController::class, 'login'])->middleware(['throttle:limit']);
 
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/forgot-password', [AuthController::class, 'forgotPass']);
 Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
 
+Route::get('/reset-password', [AuthController::class, 'GetResetPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware(['throttle:limit']);
 // Registration (name, email, msisdn, password)
 

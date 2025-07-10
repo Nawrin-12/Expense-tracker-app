@@ -4,7 +4,9 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ForgetPassRequest;
 use App\Http\Requests\ResetPassRequest;
+use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -48,7 +50,6 @@ class AuthController extends Controller
     {
         // Retrieve Validated Data
         $validated = $request->validated();
-
         try {
             $user = User::query()->where('email', $validated['email'])->first();
 
@@ -156,6 +157,26 @@ class AuthController extends Controller
                 'message' => 'Something Went Wrong. Please try again'
             ]);
 
+        }
+    }
+
+    public function GetResetPassword(Request $request): JsonResponse{
+        $validated = $request->validate([
+            'email' => 'required|email|exists:password_reset,email'
+        ]);
+
+        $user = PasswordReset::query()->where('email', $validated['email'])->first();
+        $token = $user->token;
+        if(!$token){
+            return response()->json([
+                'message' => 'Token not found'
+            ]);
+        }
+        else{
+            return response()->json([
+                'message' => 'The active token for reset password is:',
+                'token' => $token
+            ]);
         }
     }
 
